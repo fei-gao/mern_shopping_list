@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 import { Container, ListGroup, ListGroupItem, Button } from 'reactstrap';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
-import uuid from 'uuid';
 import { connect } from 'react-redux';
-import { getItems } from '../actions/itemActions'
+import { getItems, deleteItem } from '../actions/itemActions'
 import PropTypes from 'prop-types'
 
 
@@ -12,26 +11,16 @@ class ShoppingList extends Component {
   componentDidMount() {
     this.props.getItems();
   }
+
+  onDeleteClick = (id) => {
+    this.props.deleteItem(id);
+  }
+
   render() {
     // console.log()
     const { items } = this.props.item;
     return (
       <Container>
-        <Button
-          color='dark'
-          style={{ marginBottom: '2rem' }}
-          onClick={() => {
-            const name = prompt('Enter Item')
-            if (name) {
-              const items = [...this.state.items, { id: uuid(), name }];
-              this.setState({
-                items
-              })
-            }
-          }}
-        >
-          Add Item
-        </Button>
 
         <ListGroup>
           <TransitionGroup className="shopping-list">
@@ -42,14 +31,7 @@ class ShoppingList extends Component {
                     className="remove-btn"
                     color="danger"
                     size="sm"
-                    onClick={() => {
-                      const items = this.state.items.filter(item => {
-                        return item.id !== id
-                      })
-                      this.setState({
-                        items
-                      })
-                    }}
+                    onClick={this.onDeleteClick.bind(this, id)}
                   >
                     &times;
                   </Button>
@@ -73,4 +55,4 @@ const mapStateToProps = (state) => ({
   item: state.item
 })
 
-export default connect(mapStateToProps, { getItems })(ShoppingList);
+export default connect(mapStateToProps, { getItems, deleteItem })(ShoppingList);
